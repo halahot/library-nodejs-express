@@ -1,0 +1,46 @@
+<%- include('partials/header', { title: 'Редактировать книгу' }) %>
+
+    <% if (book) { %>
+        <h1>Редактировать <%= book.title %>
+        </h1>
+        <form method="POST" action="/books/update/<%= book.id %>" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label>Название</label>
+                <input type="text" name="title" value="<%= book.title %>" required>
+            </div>
+            <div class="mb-3">
+                <label>Автор</label>
+                <input type="text" name="authors" value="<%= book.authors %>">
+            </div>
+            <div class="mb-3">
+                <label>Описание</label>
+                <textarea name="description"><%= book.description %></textarea>
+            </div>
+            <% if (book.fileCover) { %>
+                <div class="mb-3">
+                    <img src="/<%= book.fileCover %>" class="img-thumbnail" style="max-width:150px;">
+                </div>
+                <% } %>
+                    <div class="mb-3">
+                        <label>Новая обложка</label>
+                        <input type="file" name="fileCover">
+                    </div>
+                    <div class="mb-3">
+                        <label>Файл книги</label>
+                        <input type="file" name="fileBook">
+                    </div>
+                    <div class=" mb-3">
+                        <input type="checkbox" name="favorite" id="favorite" <%=book.favorite ? "checked" : "" %>>
+                        <label for="favorite">Избранное</label>
+                    </div>
+                    <button class="btn btn-primary">Сохранить</button>
+                    <a href="/books" class="btn btn-secondary">Назад</a>
+        </form>
+        <% } else { %>
+            <div class="alert alert-danger">Книга не найдена</div>
+            <% } %>
+
+                </div>
+                </body>
+
+                </html>
