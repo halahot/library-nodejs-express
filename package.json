@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/halahot/library-nodejs-express#readme",
   "dependencies": {
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "multer": "^2.0.2",
+    "path": "^0.12.7",
     "uuid": "^13.0.0"
   }
 }

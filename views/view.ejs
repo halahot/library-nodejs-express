@@ -1,0 +1,36 @@
+<%- include('partials/header', { title: book ? book.title : 'Книга не найдена' }) %>
+
+    <% if (book) { %>
+        <h1>
+            <%= book.title %>
+        </h1>
+        <% if (book.fileCover) { %>
+            <img src="<%= book.fileCover %>" class="img-thumbnail mb-3" style="max-width:200px;">
+            <% } %>
+                <p><strong>Автор:</strong>
+                    <%= book.authors %>
+                </p>
+                <p>
+                    <%= book.description %>
+                </p>
+
+                <% if (book.fileBook) { %>
+                    <p><a class="btn btn-outline-primary" href="<%= book.fileBook %>" download>Скачать книгу</a></p>
+                    <% } %>
+
+                        <% if (book.favorite) { %>
+                            <span class="badge bg-success">★ Избранное</span>
+                            <% } %>
+
+                                <div class="mt-3">
+                                    <a class="btn btn-primary" href="/books/update/<%= book.id %>">Редактировать</a>
+                                    <a class="btn btn-secondary" href="/books">Назад</a>
+                                </div>
+                                <% } else { %>
+                                    <div class="alert alert-danger">Книга не найдена</div>
+                                    <% } %>
+
+                                        </div>
+                                        </body>
+
+                                        </html>

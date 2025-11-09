@@ -1,0 +1,35 @@
+<%- include('partials/header', { title: 'Добавить книгу' }) %>
+
+    <h1>Добавить книгу</h1>
+    <form method="POST" action="/books/create" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label>Название</label>
+            <input type="text" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label>Автор</label>
+            <input type="text" name="authors">
+        </div>
+        <div class="mb-3">
+            <label>Описание</label>
+            <textarea name="description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label>Обложка (jpg/png)</label>
+            <input type="file" name="fileCover">
+        </div>
+        <div class="mb-3">
+            <label>Файл книги (pdf/epub)</label>
+            <input type="file" name="fileBook">
+        </div>
+        <div class="mb-3">
+            <input type="checkbox" name="favorite" id="favorite">
+            <label for="favorite">Избранное</label>
+        </div>
+        <button class="btn btn-success">Создать</button>
+    </form>
+
+    </div>
+    </body>
+
+    </html>
