@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  library-app:
+    build: ./library-app
+    container_name: library-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - counter-service
+    volumes:
+      - ./library-app:/app
+      - ./library-app/public/uploads:/app/public/uploads
+
+  counter-service:
+    build: ./counter-service
+    container_name: counter-service
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./counter-service:/app

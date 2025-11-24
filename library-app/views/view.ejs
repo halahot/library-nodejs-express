@@ -13,6 +13,9 @@
                 <p>
                     <%= book.description %>
                 </p>
+                <p><strong>Просмотров:</strong>
+                    <%= counter %>
+                </p>
 
                 <% if (book.fileBook) { %>
                     <p><a class="btn btn-outline-primary" href="<%= book.fileBook %>" download>Скачать книгу</a></p>
