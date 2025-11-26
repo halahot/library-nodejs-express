@@ -2,6 +2,7 @@ import express from "express";
 import { v4 as uuidv4 } from "uuid";
 import { readBooks, writeBooks } from "../data/bookRepository.js";
 import * as path from "path";
+import axios from "axios";
 import { upload } from "../middleware/file-upload.js";
 
 const router = express.Router();
@@ -13,7 +14,7 @@ router.get("/", (req, res) => {
 });
 
 // Просмотр одной книги
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const books = readBooks();
   const book = books.find((b) => b.id === id);
@@ -22,7 +23,14 @@ router.get("/:id", (req, res) => {
     return res.status(404).render("view", { book: null });
   }
 
-  res.render("view", { book });
+  await axios.post(`http://counter-service:4000/counter/${id}/incr`);
+  const counterResponse = await axios.get(
+    `http://counter-service:4000/counter/${id}`
+  );
+
+  const counter = counterResponse.data.count;
+
+  res.render("view", { book, counter });
 });
 
 // Скачать книгу
