@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import booksRouter from "./routes/books.js";
 import { notFound } from "./middleware/not-found.js";
 import { errorHandler } from "./middleware/error-handler.js";
+import "./db.js";
 
 const app = express();
 const port = 3000;
