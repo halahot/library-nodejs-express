@@ -7,7 +7,7 @@ import { errorHandler } from "./middleware/error-handler.js";
 import "./db.js";
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -37,7 +37,7 @@
             if (!confirm("Удалить книгу?")) return;
 
             try {
-                const res = await fetch(`/books/${id}`, { method: "DELETE" });
+                const res = await fetch(`/books/delete/${id}`, { method: "DELETE" });
 
                 if (res.ok) {
                     showToast("Книга успешно удалена!", "success");
