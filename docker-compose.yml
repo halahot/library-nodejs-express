@@ -5,12 +5,12 @@ services:
     build: ./library-app
     container_name: library-app
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       - counter-service
       - mongo
     environment:
-      MONGO_URL: mongodb://mongo:27017/library
+      MONGO_URL: mongodb://root:123@mongo:27017/library?authSource=admin
     volumes:
       - ./library-app:/app
       - ./library-app/public/uploads:/app/public/uploads
