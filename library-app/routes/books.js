@@ -1,23 +1,23 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
-import { readBooks, writeBooks } from "../data/bookRepository.js";
-import * as path from "path";
+import Book from "../models/Book.js";
 import axios from "axios";
+import * as path from "path";
 import { upload } from "../middleware/file-upload.js";
 
 const router = express.Router();
 
 // Список книг
-router.get("/", (req, res) => {
-  const books = readBooks();
+router.get("/", async (req, res) => {
+  const books = await Book.find();
+
   res.render("index", { books });
 });
 
 // Просмотр одной книги
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const books = readBooks();
-  const book = books.find((b) => b.id === id);
+  const book = await Book.findOne({ id });
 
   if (!book) {
     return res.status(404).render("view", { book: null });
@@ -59,35 +59,28 @@ router.post(
     { name: "fileCover", maxCount: 1 },
     { name: "fileBook", maxCount: 1 },
   ]),
-  (req, res) => {
-    const books = readBooks();
-
-    const newBook = {
+  async (req, res) => {
+    const newBook = new Book({
       id: uuidv4(),
       title: req.body.title || "Без названия",
       description: req.body.description || "",
       authors: req.body.authors || "",
-      favorite: req.body.favorite === "on",
+      favorite: req.body.favorite === "on" ? "true" : "",
       fileCover: req.files.fileCover
         ? `uploads/${req.files.fileCover[0].filename}`
         : "",
       fileName: req.files.fileBook ? req.files.fileBook[0].originalname : "",
-      fileBook: req.files.fileBook
-        ? `uploads/${req.files.fileBook[0].filename}`
-        : "",
-    };
+    });
 
-    books.push(newBook);
-    writeBooks(books);
+    await newBook.save();
 
     res.redirect("/books");
   }
 );
 
 // Форма редактирования
-router.get("/update/:id", (req, res) => {
-  const books = readBooks();
-  const book = books.find((b) => b.id === req.params.id);
+router.get("/update/:id", async (req, res) => {
+  const book = await Book.findOne({ id: req.params.id });
   if (!book) return res.status(404).render("update", { book: null });
   res.render("update", { book });
 });
@@ -99,50 +92,38 @@ router.post(
     { name: "fileBook", maxCount: 1 },
     { name: "fileCover", maxCount: 1 },
   ]),
-  (req, res) => {
+  async (req, res) => {
     const { id } = req.params;
-    const books = readBooks();
-    const index = books.findIndex((b) => b.id === id);
 
-    if (index === -1) {
-      return res.status(404).json({ code: 404, message: "Book not found" });
-    }
-
-    const updated = {
-      ...books[index],
-      ...req.body,
+    const updateData = {
+      title: req.body.title,
+      description: req.body.description,
+      authors: req.body.authors,
+      favorite: req.body.favorite === "on" ? "true" : "",
     };
 
     if (req.files?.fileBook) {
-      updated.fileBook = `uploads/${req.files.fileBook[0].filename}`;
-      updated.fileName = req.files.fileBook[0].originalname;
+      updateData.fileBook = `uploads/${req.files.fileBook[0].filename}`;
+      updateData.fileName = req.files.fileBook[0].originalname;
     }
 
     if (req.files?.fileCover) {
-      updated.fileCover = `uploads/${req.files.fileCover[0].filename}`;
+      updateData.fileCover = `uploads/${req.files.fileCover[0].filename}`;
     }
 
-    updated.favorite = req.body.favorite === "on";
-
-    books[index] = updated;
-    writeBooks(books);
+    await Book.findOneAndUpdate({ id }, updateData);
 
     res.redirect(`/books/${id}`);
   }
 );
 
 // Удалить книгу
-router.post("/delete/:id", (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
-  const books = readBooks();
-  const filtered = books.filter((b) => b.id !== id);
 
-  if (filtered.length === books.length) {
-    return res.status(404).json({ code: 404, message: "Book not found" });
-  }
+  await Book.findOneAndDelete({ id });
 
-  writeBooks(filtered);
-  res.redirect("/books");
+  res.json({ status: "ok" });
 });
 
 export default router;

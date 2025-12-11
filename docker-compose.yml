@@ -5,9 +5,12 @@ services:
     build: ./library-app
     container_name: library-app
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       - counter-service
+      - mongo
+    environment:
+      MONGO_URL: mongodb://root:123@mongo:27017/library?authSource=admin
     volumes:
       - ./library-app:/app
       - ./library-app/public/uploads:/app/public/uploads
@@ -19,3 +22,28 @@ services:
       - "4000:4000"
     volumes:
       - ./counter-service:/app
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:123@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: 123
+
+volumes:
+  mongo-data:
