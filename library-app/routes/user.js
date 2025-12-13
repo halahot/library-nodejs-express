@@ -1,5 +1,5 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import passport from "passport";
 import User from "../models/User.js";
 import { ensureAuth } from "../middleware/auth.js";

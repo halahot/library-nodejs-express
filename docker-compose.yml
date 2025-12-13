@@ -13,6 +13,7 @@ services:
       MONGO_URL: mongodb://root:123@mongo:27017/library?authSource=admin
     volumes:
       - ./library-app:/app
+      - /app/node_modules
       - ./library-app/public/uploads:/app/public/uploads
 
   counter-service:
