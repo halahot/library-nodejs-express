@@ -1,0 +1,9 @@
+<%- include('../partials/header', { title: 'Profile' }) %>
+
+    <h1>Hello, <%= user.name || user.email %>
+    </h1>
+
+    <p>Email: <%= user.email %>
+    </p>
+
+    <a class="btn btn-danger" href="/api/user/logout">Logout</a>
