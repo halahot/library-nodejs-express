@@ -1,4 +1,3 @@
-// socket/index.js
 import commentsSocket from "./comments.js";
 
 export default function initSocket(io) {

@@ -1,4 +1,3 @@
-// socket/comments.js
 import Comment from "../models/Comment.js";
 
 export default function commentsSocket(io, socket) {
