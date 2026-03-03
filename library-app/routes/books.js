@@ -1,6 +1,7 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
 import Book from "../models/Book.js";
+import Comment from "../models/Comment.js";
 import axios from "axios";
 import * as path from "path";
 import { upload } from "../middleware/file-upload.js";
@@ -18,6 +19,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const book = await Book.findOne({ id });
+  const comments = await Comment.find({ bookId: id }).sort({ createdAt: 1 });
 
   if (!book) {
     return res.status(404).render("view", { book: null });
@@ -30,7 +32,7 @@ router.get("/:id", async (req, res) => {
 
   const counter = counterResponse.data.count;
 
-  res.render("view", { book, counter });
+  res.render("view", { book, counter, comments });
 });
 
 // Скачать книгу
