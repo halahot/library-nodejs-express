@@ -5,12 +5,15 @@ import Comment from "../models/Comment.js";
 import axios from "axios";
 import * as path from "path";
 import { upload } from "../middleware/file-upload.js";
+import { container } from "../container.js";
+import { MyBooksRepository } from "../data/BooksRepository.js";
 
 const router = express.Router();
 
 // Список книг
 router.get("/", async (req, res) => {
-  const books = await Book.find();
+  const repo = container.get(MyBooksRepository);
+  const books = await repo.getBooks();
 
   res.render("index", { books });
 });
@@ -18,34 +21,37 @@ router.get("/", async (req, res) => {
 // Просмотр одной книги
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const book = await Book.findOne({ id });
+  const repo = container.get(MyBooksRepository);
+  const book = await repo.getBook(id);
   const comments = await Comment.find({ bookId: id }).sort({ createdAt: 1 });
 
   if (!book) {
     return res.status(404).render("view", { book: null });
   }
 
-  await axios.post(`http://counter-service:4000/counter/${id}/incr`);
-  const counterResponse = await axios.get(
-    `http://counter-service:4000/counter/${id}`
-  );
-
-  const counter = counterResponse.data.count;
-
-  res.render("view", { book, counter, comments });
+  try {
+    await axios.post(`http://counter-service:4000/counter/${id}/incr`);
+    const counterResponse = await axios.get(
+      `http://counter-service:4000/counter/${id}`
+    );
+    const counter = counterResponse.data.count;
+    res.render("view", { book, counter, comments });
+  } catch (e) {
+    res.render("view", { book, counter: 0, comments });
+  }
 });
 
 // Скачать книгу
-router.get("/:id/download", (req, res) => {
+router.get("/:id/download", async (req, res) => {
   const { id } = req.params;
-  const books = readBooks();
-  const book = books.find((b) => b.id === id);
+  const repo = container.get(MyBooksRepository);
+  const book = await repo.getBook(id);
 
   if (!book || !book.fileBook) {
     return res.status(404).json({ code: 404, message: "File not found" });
   }
 
-  const filePath = path.resolve(`public/uploads/${book.fileBook}`);
+  const filePath = path.resolve(`public/${book.fileBook}`);
   res.download(filePath, book.fileName || "book");
 });
 
@@ -62,7 +68,8 @@ router.post(
     { name: "fileBook", maxCount: 1 },
   ]),
   async (req, res) => {
-    const newBook = new Book({
+    const repo = container.get(MyBooksRepository);
+    await repo.createBook({
       id: uuidv4(),
       title: req.body.title || "Без названия",
       description: req.body.description || "",
@@ -74,15 +81,14 @@ router.post(
       fileName: req.files.fileBook ? req.files.fileBook[0].originalname : "",
     });
 
-    await newBook.save();
-
     res.redirect("/books");
   }
 );
 
 // Форма редактирования
 router.get("/update/:id", async (req, res) => {
-  const book = await Book.findOne({ id: req.params.id });
+  const repo = container.get(MyBooksRepository);
+  const book = await repo.getBook(req.params.id);
   if (!book) return res.status(404).render("update", { book: null });
   res.render("update", { book });
 });
@@ -96,6 +102,7 @@ router.post(
   ]),
   async (req, res) => {
     const { id } = req.params;
+    const repo = container.get(MyBooksRepository);
 
     const updateData = {
       title: req.body.title,
@@ -113,7 +120,7 @@ router.post(
       updateData.fileCover = `uploads/${req.files.fileCover[0].filename}`;
     }
 
-    await Book.findOneAndUpdate({ id }, updateData);
+    await repo.updateBook(id, updateData);
 
     res.redirect(`/books/${id}`);
   }
@@ -122,8 +129,9 @@ router.post(
 // Удалить книгу
 router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
+  const repo = container.get(MyBooksRepository);
 
-  await Book.findOneAndDelete({ id });
+  await repo.deleteBook(id);
 
   res.json({ status: "ok" });
 });

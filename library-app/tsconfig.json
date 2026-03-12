@@ -8,6 +8,9 @@
         "strict": true,
         "strictNullChecks": false,
         "skipLibCheck": true,
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "outDir": "./dist",
         "rootDir": "./"
     },
