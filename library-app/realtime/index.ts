@@ -1,7 +1,8 @@
+import { Server, Socket } from "socket.io";
 import commentsSocket from "./comments.js";
 
-export default function initSocket(io) {
-  io.on("connection", (socket) => {
+const initSocket = (io: Server): void => {
+  io.on("connection", (socket: Socket<any, any, any, any>) => {
     console.log("Socket connected:", socket.id);
 
     commentsSocket(io, socket);
@@ -10,4 +11,6 @@ export default function initSocket(io) {
       console.log("Socket disconnected:", socket.id);
     });
   });
-}
+};
+
+export default initSocket;

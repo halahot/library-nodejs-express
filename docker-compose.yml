@@ -10,7 +10,10 @@ services:
       - counter-service
       - mongo
     environment:
+      HTTP_PORT: 3001
       MONGO_URL: mongodb://root:123@mongo:27017/library?authSource=admin
+      SESSION_SECRET: super-secret-key
+    command: sh -c "npm run build && npm start"
     volumes:
       - ./library-app:/app
       - /app/node_modules

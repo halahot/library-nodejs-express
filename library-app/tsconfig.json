@@ -4,6 +4,9 @@
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "esModuleInterop": true,
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "strictNullChecks": false,
@@ -12,7 +15,8 @@
         "rootDir": "./"
     },
     "include": [
-        "**/*.ts"
+        "**/*.ts",
+        "**/*.js"
     ],
     "exclude": [
         "node_modules",
