@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IBook extends Document {
   id: string;
@@ -7,10 +7,11 @@ export interface IBook extends Document {
   authors: string;
   favorite: string;
   fileCover: string;
+  fileBook: string;
   fileName: string;
 }
 
-const BookSchema: Schema = new Schema({
+const bookSchema = new Schema<IBook>({
   id: {
     type: String,
     required: true,
@@ -35,10 +36,16 @@ const BookSchema: Schema = new Schema({
     type: String,
     default: "",
   },
+  fileBook: {
+    type: String,
+    default: "",
+  },
   fileName: {
     type: String,
     default: "",
   },
 });
 
-export default mongoose.model<IBook>("Book", BookSchema, "books");
+const Book = mongoose.model<IBook>("Book", bookSchema, "books");
+
+export default Book;

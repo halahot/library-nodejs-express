@@ -18,7 +18,7 @@
                 </p>
 
                 <% if (book.fileBook) { %>
-                    <p><a class="btn btn-outline-primary" href="<%= book.fileBook %>" download>Скачать книгу</a></p>
+                    <p><a class="btn btn-outline-primary" href="/books/<%= book.id %>/download">Скачать книгу</a></p>
                     <% } %>
 
                         <% if (book.favorite) { %>
